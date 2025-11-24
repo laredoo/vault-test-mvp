@@ -1,6 +1,8 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   ArrowLeft,
   Calendar,
@@ -20,140 +22,18 @@ import {
   CircleCheck,
   Sparkles,
   TrendingUp,
+  Loader2,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-
-// Extended mock data
-const testDetails: Record<string, TestDetail> = {
-  "1": {
-    id: "1",
-    title: "E-commerce Platform Security Audit",
-    company: "ShopMax Inc.",
-    companyLogo: "/shopmax-logo.jpg",
-    companyVerified: true,
-    description:
-      "Conduct comprehensive security testing on a large-scale e-commerce platform including payment processing, user authentication, and data handling.",
-    fullDescription: `We are seeking an experienced security tester to perform a thorough security audit of our e-commerce platform. The platform handles sensitive customer data including payment information, personal details, and transaction history.
-
-The audit should cover:
-- Authentication and authorization mechanisms
-- Payment gateway integration security
-- Data encryption and storage practices
-- API endpoint vulnerabilities
-- Session management and cookie security
-- Cross-site scripting (XSS) and SQL injection testing
-- Rate limiting and DDoS protection assessment`,
-    reward: 850,
-    deadline: "2025-02-15",
-    type: "Security Testing",
-    difficulty: "Advanced",
-    estimatedHours: 20,
-    tags: ["Web App", "Payment Systems", "Authentication", "OWASP", "PCI-DSS"],
-    requirements: [
-      "5+ years of security testing experience",
-      "OWASP Top 10 expertise",
-      "Experience with payment system security",
-      "Familiarity with PCI-DSS compliance",
-      "Strong report writing skills",
-    ],
-    deliverables: [
-      "Comprehensive security assessment report",
-      "Vulnerability severity classification",
-      "Remediation recommendations",
-      "Executive summary for stakeholders",
-      "Re-test verification (if needed)",
-    ],
-    compatibility: 92,
-    matchedSkills: ["Security Testing", "Web Applications", "API Testing", "OWASP"],
-    missingSkills: ["PCI-DSS Certification"],
-    reliabilityScore: 98,
-    complianceBadges: ["ISO 27001", "SOC 2", "GDPR"],
-    testedBy: 45,
-    successRate: 94,
-    avgCompletionTime: 18,
-    status: "verified",
-    postedDate: "2025-01-20",
-  },
-  "2": {
-    id: "2",
-    title: "Mobile Banking App Functional Testing",
-    company: "FinanceFirst",
-    companyLogo: "/fintech-bank-logo.jpg",
-    companyVerified: true,
-    description:
-      "Perform end-to-end functional testing on iOS and Android banking application. Focus on transaction flows and account management features.",
-    fullDescription: `FinanceFirst is looking for a skilled functional tester to validate our mobile banking application across both iOS and Android platforms. The app serves over 2 million users and handles critical financial operations.
-
-Testing scope includes:
-- User registration and onboarding flows
-- Account management (viewing balances, statements)
-- Fund transfers (internal and external)
-- Bill payments and scheduled transactions
-- Biometric authentication
-- Push notifications and alerts
-- Offline mode functionality`,
-    reward: 600,
-    deadline: "2025-02-10",
-    type: "Functional Testing",
-    difficulty: "Intermediate",
-    estimatedHours: 15,
-    tags: ["Mobile", "iOS", "Android", "Finance", "Banking"],
-    requirements: [
-      "3+ years mobile testing experience",
-      "iOS and Android testing expertise",
-      "Understanding of financial workflows",
-      "Experience with mobile testing tools",
-    ],
-    deliverables: [
-      "Test case documentation",
-      "Bug reports with severity levels",
-      "Device compatibility matrix",
-      "Final test summary report",
-    ],
-    compatibility: 78,
-    matchedSkills: ["Mobile Testing", "Functional Testing", "iOS"],
-    missingSkills: ["Android Testing", "Banking Domain"],
-    reliabilityScore: 95,
-    complianceBadges: ["PCI-DSS", "SOC 2"],
-    testedBy: 32,
-    successRate: 91,
-    avgCompletionTime: 14,
-    status: "verified",
-    postedDate: "2025-01-22",
-  },
-}
-
-interface TestDetail {
-  id: string
-  title: string
-  company: string
-  companyLogo: string
-  companyVerified: boolean
-  description: string
-  fullDescription: string
-  reward: number
-  deadline: string
-  type: string
-  difficulty: string
-  estimatedHours: number
-  tags: string[]
-  requirements: string[]
-  deliverables: string[]
-  compatibility: number
-  matchedSkills: string[]
-  missingSkills: string[]
-  reliabilityScore: number
-  complianceBadges: string[]
-  testedBy: number
-  successRate: number
-  avgCompletionTime: number
-  status: string
-  postedDate: string
-}
+import { getTestById } from "@/lib/test-data"
+import { useAcceptedTestsStore } from "@/lib/accepted-tests-store"
+import { useLanguageStore } from "@/lib/language-store"
+import { useTranslation } from "@/lib/translations"
+import { LanguageToggle } from "@/components/language-toggle"
 
 const difficultyColors: Record<string, string> = {
   Beginner: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -167,25 +47,25 @@ function getCompatibilityColor(score: number) {
   return "text-red-600 dark:text-red-400"
 }
 
-function getCompatibilityBg(score: number) {
-  if (score >= 85) return "bg-green-500"
-  if (score >= 70) return "bg-yellow-500"
-  return "bg-red-500"
-}
-
 export function TestDetailClient({ id }: { id: string }) {
-  const test = testDetails[id]
+  const router = useRouter()
+  const [isAccepting, setIsAccepting] = useState(false)
+  const { acceptTest, isTestAccepted } = useAcceptedTestsStore()
+  const { language } = useLanguageStore()
+  const t = useTranslation(language)
+  const test = getTestById(id)
+  const alreadyAccepted = isTestAccepted(id)
 
   if (!test) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-foreground mb-2">Test Not Found</h1>
-          <p className="text-muted-foreground mb-4">The requested test opportunity does not exist.</p>
+          <h1 className="text-2xl font-semibold text-foreground mb-2">{t.testNotFound}</h1>
+          <p className="text-muted-foreground mb-4">{t.testNotFoundDescription}</p>
           <Link href="/">
             <Button>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              {t.backToDashboard}
             </Button>
           </Link>
         </div>
@@ -195,6 +75,13 @@ export function TestDetailClient({ id }: { id: string }) {
 
   const daysUntilDeadline = Math.ceil((new Date(test.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
   const isUrgent = daysUntilDeadline <= 7
+
+  const handleAcceptTest = async () => {
+    setIsAccepting(true)
+    await new Promise((resolve) => setTimeout(resolve, 800))
+    acceptTest(id)
+    router.push("/?section=my-tests")
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -207,11 +94,37 @@ export function TestDetailClient({ id }: { id: string }) {
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
-              <span className="font-medium">Back to Tests</span>
+              <span className="font-medium">{t.backToTests}</span>
             </Link>
             <div className="flex items-center gap-3">
-              <Button variant="outline">Save for Later</Button>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Accept Test</Button>
+              <LanguageToggle variant="compact" />
+              <Button variant="outline" className="hidden sm:flex bg-transparent">
+                {t.saveForLater}
+              </Button>
+              {alreadyAccepted ? (
+                <Link href="/?section=my-tests">
+                  <Button className="bg-green-600 text-white hover:bg-green-700">
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    <span className="hidden sm:inline">{t.viewInMyTests}</span>
+                    <span className="sm:hidden">{t.goToMyTests}</span>
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={handleAcceptTest}
+                  disabled={isAccepting}
+                >
+                  {isAccepting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t.accepting}
+                    </>
+                  ) : (
+                    t.acceptTest
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -232,7 +145,13 @@ export function TestDetailClient({ id }: { id: string }) {
                   {test.status === "verified" && (
                     <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      Verified Test
+                      {t.verifiedTest}
+                    </Badge>
+                  )}
+                  {alreadyAccepted && (
+                    <Badge className="bg-primary/10 text-primary flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      {t.accepted}
                     </Badge>
                   )}
                 </div>
@@ -250,7 +169,7 @@ export function TestDetailClient({ id }: { id: string }) {
                       <span className="font-semibold text-foreground">{test.company}</span>
                       {test.companyVerified && <BadgeCheck className="w-5 h-5 text-primary" />}
                     </div>
-                    <p className="text-sm text-muted-foreground">Verified Company Partner</p>
+                    <p className="text-sm text-muted-foreground">{t.verifiedPartner}</p>
                   </div>
                 </div>
 
@@ -261,14 +180,14 @@ export function TestDetailClient({ id }: { id: string }) {
                       <DollarSign className="w-5 h-5" />
                       <span className="text-2xl font-bold">{test.reward}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Reward</p>
+                    <p className="text-xs text-muted-foreground">{t.reward}</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Clock className="w-5 h-5 text-muted-foreground" />
                       <span className="text-2xl font-bold text-foreground">{test.estimatedHours}h</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Estimated</p>
+                    <p className="text-xs text-muted-foreground">{t.estimated}</p>
                   </div>
                   <div className="text-center">
                     <div
@@ -280,14 +199,14 @@ export function TestDetailClient({ id }: { id: string }) {
                       <Calendar className="w-5 h-5" />
                       <span className="text-2xl font-bold">{daysUntilDeadline}d</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Deadline</p>
+                    <p className="text-xs text-muted-foreground">{t.deadline}</p>
                   </div>
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Users className="w-5 h-5 text-muted-foreground" />
                       <span className="text-2xl font-bold text-foreground">{test.testedBy}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Testers</p>
+                    <p className="text-xs text-muted-foreground">{t.testers}</p>
                   </div>
                 </div>
               </CardContent>
@@ -298,7 +217,7 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary" />
-                  Test Description
+                  {t.testDescription}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -314,7 +233,7 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="w-5 h-5 text-primary" />
-                  Requirements
+                  {t.requirements}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -334,7 +253,7 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-primary" />
-                  Deliverables
+                  {t.deliverables}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -352,7 +271,7 @@ export function TestDetailClient({ id }: { id: string }) {
             {/* Tags */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Related Skills & Tags</CardTitle>
+                <CardTitle className="text-base">{t.relatedSkillsTags}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -373,7 +292,7 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Sparkles className="w-5 h-5 text-primary" />
-                  Profile Compatibility
+                  {t.profileCompatibility}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -381,7 +300,7 @@ export function TestDetailClient({ id }: { id: string }) {
                   <span className={cn("text-5xl font-bold", getCompatibilityColor(test.compatibility))}>
                     {test.compatibility}%
                   </span>
-                  <p className="text-sm text-muted-foreground mt-1">Match Score</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t.matchScore}</p>
                 </div>
                 <Progress value={test.compatibility} className="h-2 mb-6" />
 
@@ -389,7 +308,7 @@ export function TestDetailClient({ id }: { id: string }) {
                   <div>
                     <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      Matched Skills
+                      {t.matchedSkills}
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {test.matchedSkills.map((skill) => (
@@ -407,7 +326,7 @@ export function TestDetailClient({ id }: { id: string }) {
                     <div>
                       <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-yellow-500" />
-                        Skills to Develop
+                        {t.skillsToDevelop}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {test.missingSkills.map((skill) => (
@@ -427,14 +346,14 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Shield className="w-5 h-5 text-primary" />
-                  Trust & Reliability
+                  {t.trustReliability}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-5 h-5 text-green-600 dark:text-green-400" />
-                    <span className="text-sm font-medium text-foreground">Reliability Score</span>
+                    <span className="text-sm font-medium text-foreground">{t.reliabilityScore}</span>
                   </div>
                   <span className="text-lg font-bold text-green-600 dark:text-green-400">{test.reliabilityScore}%</span>
                 </div>
@@ -442,7 +361,7 @@ export function TestDetailClient({ id }: { id: string }) {
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">Success Rate</span>
+                    <span className="text-sm font-medium text-foreground">{t.successRate}</span>
                   </div>
                   <span className="text-lg font-bold text-foreground">{test.successRate}%</span>
                 </div>
@@ -450,7 +369,7 @@ export function TestDetailClient({ id }: { id: string }) {
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-sm font-medium text-foreground">Avg. Completion</span>
+                    <span className="text-sm font-medium text-foreground">{t.avgCompletion}</span>
                   </div>
                   <span className="text-lg font-bold text-foreground">{test.avgCompletionTime}h</span>
                 </div>
@@ -462,13 +381,11 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Lock className="w-5 h-5 text-primary" />
-                  Compliance Standards
+                  {t.complianceStandards}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  This test adheres to the following industry standards:
-                </p>
+                <p className="text-sm text-muted-foreground mb-4">{t.complianceDescription}</p>
                 <div className="grid grid-cols-1 gap-3">
                   {test.complianceBadges.map((badge) => (
                     <div key={badge} className="flex items-center gap-3 p-3 border border-border rounded-lg bg-card">
@@ -477,7 +394,7 @@ export function TestDetailClient({ id }: { id: string }) {
                       </div>
                       <div>
                         <p className="font-medium text-foreground">{badge}</p>
-                        <p className="text-xs text-muted-foreground">Certified Compliant</p>
+                        <p className="text-xs text-muted-foreground">{t.certifiedCompliant}</p>
                       </div>
                     </div>
                   ))}
@@ -490,7 +407,7 @@ export function TestDetailClient({ id }: { id: string }) {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Building2 className="w-5 h-5 text-primary" />
-                  About Company
+                  {t.aboutCompany}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -505,13 +422,10 @@ export function TestDetailClient({ id }: { id: string }) {
                       <span className="font-semibold text-foreground">{test.company}</span>
                       {test.companyVerified && <BadgeCheck className="w-5 h-5 text-primary" />}
                     </div>
-                    <p className="text-sm text-muted-foreground">Verified Partner</p>
+                    <p className="text-sm text-muted-foreground">{t.verifiedPartner}</p>
                   </div>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  This company has been verified by our team and maintains a strong track record of successful
-                  collaborations with testers on our platform.
-                </p>
+                <p className="text-sm text-muted-foreground">{t.companyDescription}</p>
               </CardContent>
             </Card>
 
@@ -522,18 +436,41 @@ export function TestDetailClient({ id }: { id: string }) {
                   <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                     <CheckCircle2 className="w-8 h-8 text-primary" />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Ready to Start?</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Accept this test to begin working on this opportunity
-                    </p>
-                  </div>
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" size="lg">
-                    Accept Test
-                  </Button>
-                  <p className="text-xs text-muted-foreground">
-                    By accepting, you agree to complete this test by the deadline
-                  </p>
+                  {alreadyAccepted ? (
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{t.testAccepted}</h3>
+                      <p className="text-sm text-muted-foreground">{t.testAcceptedDescription}</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{t.readyToStart}</h3>
+                      <p className="text-sm text-muted-foreground">{t.readyToStartDescription}</p>
+                    </div>
+                  )}
+                  {alreadyAccepted ? (
+                    <Link href="/?section=my-tests" className="block">
+                      <Button className="w-full bg-green-600 text-white hover:bg-green-700" size="lg">
+                        <CheckCircle2 className="w-4 h-4 mr-2" />
+                        {t.goToMyTests}
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                      size="lg"
+                      onClick={handleAcceptTest}
+                      disabled={isAccepting}
+                    >
+                      {isAccepting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {t.accepting}
+                        </>
+                      ) : (
+                        t.acceptTest
+                      )}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

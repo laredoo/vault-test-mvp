@@ -1,99 +1,35 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import DashboardSidebar from "@/components/dashboard/sidebar"
 import DashboardHeader from "@/components/dashboard/header"
 import TestOpportunityCard from "@/components/dashboard/test-opportunity-card"
 import TestFilters from "@/components/dashboard/test-filters"
+import MyTestsSection from "@/components/dashboard/my-tests-section"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-
-// Mock data for testing opportunities
-const testOpportunities = [
-  {
-    id: "1",
-    title: "E-commerce Platform Security Audit",
-    company: "ShopMax Inc.",
-    description:
-      "Conduct comprehensive security testing on a large-scale e-commerce platform including payment processing, user authentication, and data handling.",
-    reward: 850,
-    deadline: "2025-02-15",
-    type: "Security Testing",
-    difficulty: "Advanced",
-    estimatedHours: 20,
-    tags: ["Web App", "Payment Systems", "Authentication"],
-  },
-  {
-    id: "2",
-    title: "Mobile Banking App Functional Testing",
-    company: "FinanceFirst",
-    description:
-      "Perform end-to-end functional testing on iOS and Android banking application. Focus on transaction flows and account management features.",
-    reward: 600,
-    deadline: "2025-02-10",
-    type: "Functional Testing",
-    difficulty: "Intermediate",
-    estimatedHours: 15,
-    tags: ["Mobile", "iOS", "Android", "Finance"],
-  },
-  {
-    id: "3",
-    title: "Healthcare Portal Accessibility Testing",
-    company: "MedCare Systems",
-    description:
-      "Evaluate WCAG 2.1 compliance and overall accessibility of patient portal. Test screen reader compatibility and keyboard navigation.",
-    reward: 450,
-    deadline: "2025-02-20",
-    type: "Accessibility Testing",
-    difficulty: "Intermediate",
-    estimatedHours: 12,
-    tags: ["Healthcare", "WCAG", "Accessibility"],
-  },
-  {
-    id: "4",
-    title: "SaaS Dashboard Performance Testing",
-    company: "CloudMetrics",
-    description:
-      "Load and stress testing for analytics dashboard. Identify bottlenecks and performance issues under high concurrent user loads.",
-    reward: 700,
-    deadline: "2025-02-08",
-    type: "Performance Testing",
-    difficulty: "Advanced",
-    estimatedHours: 18,
-    tags: ["SaaS", "Load Testing", "Analytics"],
-  },
-  {
-    id: "5",
-    title: "API Integration Testing Suite",
-    company: "DataSync Corp",
-    description:
-      "Create and execute test cases for RESTful API endpoints. Validate data integrity, error handling, and rate limiting functionality.",
-    reward: 550,
-    deadline: "2025-02-25",
-    type: "API Testing",
-    difficulty: "Intermediate",
-    estimatedHours: 14,
-    tags: ["API", "REST", "Integration"],
-  },
-  {
-    id: "6",
-    title: "Gaming Platform Regression Testing",
-    company: "PlayZone Studios",
-    description:
-      "Execute regression test suite for multiplayer gaming platform after major update. Focus on matchmaking and in-game transactions.",
-    reward: 400,
-    deadline: "2025-02-12",
-    type: "Regression Testing",
-    difficulty: "Beginner",
-    estimatedHours: 10,
-    tags: ["Gaming", "Multiplayer", "Transactions"],
-  },
-]
+import { testOpportunities } from "@/lib/test-data"
 
 export default function Dashboard() {
-  const [activeSection, setActiveSection] = useState("available")
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const initialSection = searchParams.get("section") || "available"
+  const [activeSection, setActiveSection] = useState(initialSection)
   const [filteredTests, setFilteredTests] = useState(testOpportunities)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const sectionParam = searchParams.get("section")
+    if (sectionParam && sectionParam !== activeSection) {
+      setActiveSection(sectionParam)
+    }
+  }, [searchParams, activeSection])
+
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section)
+    router.push(`/?section=${section}`, { scroll: false })
+  }
 
   const handleFilterChange = useCallback(
     (filters: {
@@ -138,7 +74,6 @@ export default function Dashboard() {
           break
         case "newest":
         default:
-          // Keep original order for newest
           break
       }
 
@@ -151,7 +86,7 @@ export default function Dashboard() {
     <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-        <DashboardSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+        <DashboardSidebar activeSection={activeSection} onSectionChange={handleSectionChange} />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -160,7 +95,7 @@ export default function Dashboard() {
           <DashboardSidebar
             activeSection={activeSection}
             onSectionChange={(section) => {
-              setActiveSection(section)
+              handleSectionChange(section)
               setMobileMenuOpen(false)
             }}
           />
@@ -204,21 +139,7 @@ export default function Dashboard() {
             </>
           )}
 
-          {activeSection === "my-tests" && (
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground mb-2">My Tests</h1>
-              <p className="text-muted-foreground mb-6">Track your active and completed test assignments</p>
-              <div className="bg-card border border-border rounded-lg p-8 text-center">
-                <p className="text-muted-foreground">You haven't accepted any tests yet.</p>
-                <Button
-                  className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={() => setActiveSection("available")}
-                >
-                  Browse Available Tests
-                </Button>
-              </div>
-            </div>
-          )}
+          {activeSection === "my-tests" && <MyTestsSection onBrowseTests={() => handleSectionChange("available")} />}
 
           {activeSection === "profile" && (
             <div>

@@ -1,24 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import { Calendar, Clock, DollarSign, ArrowRight, Building2 } from "lucide-react"
+import { Calendar, Clock, DollarSign, ArrowRight, Building2, CheckCircle2 } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-
-interface TestOpportunity {
-  id: string
-  title: string
-  company: string
-  description: string
-  reward: number
-  deadline: string
-  type: string
-  difficulty: string
-  estimatedHours: number
-  tags: string[]
-}
+import type { TestOpportunity } from "@/lib/test-data"
+import { useAcceptedTestsStore } from "@/lib/accepted-tests-store"
 
 interface CardProps {
   test: TestOpportunity
@@ -31,17 +20,32 @@ const difficultyColors: Record<string, string> = {
 }
 
 export default function TestOpportunityCard({ test }: CardProps) {
-  const daysUntilDeadline = Math.ceil((new Date(test.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+  const { isTestAccepted } = useAcceptedTestsStore()
+  const accepted = isTestAccepted(test.id)
 
+  const daysUntilDeadline = Math.ceil((new Date(test.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
   const isUrgent = daysUntilDeadline <= 7
 
   return (
-    <Card className="group flex flex-col h-full hover:shadow-lg transition-all duration-300 border-border hover:border-primary/30">
+    <Card
+      className={cn(
+        "group flex flex-col h-full hover:shadow-lg transition-all duration-300 border-border hover:border-primary/30",
+        accepted && "border-green-500/30 bg-green-50/30 dark:bg-green-900/10",
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <Badge variant="secondary" className="text-xs font-medium">
-            {test.type}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs font-medium">
+              {test.type}
+            </Badge>
+            {accepted && (
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs">
+                <CheckCircle2 className="w-3 h-3 mr-1" />
+                Accepted
+              </Badge>
+            )}
+          </div>
           <Badge className={cn("text-xs", difficultyColors[test.difficulty])}>{test.difficulty}</Badge>
         </div>
         <h3 className="font-semibold text-lg leading-tight mt-3 group-hover:text-primary transition-colors">
@@ -93,8 +97,15 @@ export default function TestOpportunityCard({ test }: CardProps) {
             <span className="text-xl font-bold text-foreground">{test.reward}</span>
           </div>
           <Link href={`/test/${test.id}`}>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 group/btn">
-              View Details
+            <Button
+              className={cn(
+                "group/btn",
+                accepted
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90",
+              )}
+            >
+              {accepted ? "View Progress" : "View Details"}
               <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
             </Button>
           </Link>
