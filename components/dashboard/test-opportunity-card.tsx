@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { Calendar, Clock, DollarSign, ArrowRight, Building2 } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -91,10 +92,12 @@ export default function TestOpportunityCard({ test }: CardProps) {
             <DollarSign className="w-5 h-5 text-primary" />
             <span className="text-xl font-bold text-foreground">{test.reward}</span>
           </div>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90 group/btn">
-            View Details
-            <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-          </Button>
+          <Link href={`/test/${test.id}`}>
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 group/btn">
+              View Details
+              <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
       </CardFooter>
     </Card>
