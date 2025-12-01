@@ -10,10 +10,15 @@ import MyTestsSection from "@/components/dashboard/my-tests-section"
 import ProfileSection from "@/components/dashboard/profile-section"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { testOpportunities } from "@/lib/test-data"
+import { useLanguageStore } from "@/lib/language-store"
+import { useTranslation } from "@/lib/translations"
 
 export default function Dashboard() {
   const searchParams = useSearchParams()
   const router = useRouter()
+
+  const { language } = useLanguageStore()
+  const t = useTranslation(language)
 
   const initialSection = searchParams.get("section") || "available"
   const [activeSection, setActiveSection] = useState(initialSection)
@@ -107,17 +112,17 @@ export default function Dashboard() {
           {activeSection === "available" && (
             <>
               <div className="mb-6">
-                <h1 className="text-2xl font-semibold text-foreground">Available Tests</h1>
-                <p className="text-muted-foreground mt-1">
-                  Browse and accept testing opportunities matched to your profile
-                </p>
+                <h1 className="text-2xl font-semibold text-foreground">{t.availableTestsTitle}</h1>
+                <p className="text-muted-foreground mt-1">{t.availableTestsDescription}</p>
               </div>
 
               <TestFilters onFilterChange={handleFilterChange} />
 
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-4">
-                  <p className="text-sm text-muted-foreground">Showing {filteredTests.length} opportunities</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.showingOpportunities.replace("{count}", String(filteredTests.length))}
+                  </p>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -128,8 +133,8 @@ export default function Dashboard() {
 
                 {filteredTests.length === 0 && (
                   <div className="text-center py-12">
-                    <p className="text-muted-foreground">No tests match your filters.</p>
-                    <p className="text-sm text-muted-foreground mt-1">Try adjusting your search criteria.</p>
+                    <p className="text-muted-foreground">{t.noTestsMatchFilters}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{t.tryAdjustingSearchCriteria}</p>
                   </div>
                 )}
               </div>
@@ -142,10 +147,10 @@ export default function Dashboard() {
 
           {activeSection === "settings" && (
             <div>
-              <h1 className="text-2xl font-semibold text-foreground mb-2">Settings</h1>
-              <p className="text-muted-foreground mb-6">Configure your account preferences</p>
+              <h1 className="text-2xl font-semibold text-foreground mb-2">{t.settings}</h1>
+              <p className="text-muted-foreground mb-6">{t.configureAccountPreferences}</p>
               <div className="bg-card border border-border rounded-lg p-6">
-                <p className="text-muted-foreground">Settings panel coming soon...</p>
+                <p className="text-muted-foreground">{t.settingsPanelComingSoon}</p>
               </div>
             </div>
           )}
