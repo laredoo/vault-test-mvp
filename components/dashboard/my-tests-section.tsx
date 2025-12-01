@@ -25,34 +25,8 @@ import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { useAcceptedTestsStore, type AcceptedTest } from "@/lib/accepted-tests-store"
 import { testOpportunities, type TestOpportunity } from "@/lib/test-data"
-
-const statusConfig: Record<AcceptedTest["status"], { label: string; color: string; icon: React.ElementType }> = {
-  "in-progress": {
-    label: "In Progress",
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    icon: Play,
-  },
-  submitted: {
-    label: "Submitted",
-    color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-    icon: Send,
-  },
-  "under-review": {
-    label: "Under Review",
-    color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-    icon: FileText,
-  },
-  completed: {
-    label: "Completed",
-    color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    icon: CheckCircle2,
-  },
-  rejected: {
-    label: "Rejected",
-    color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    icon: AlertCircle,
-  },
-}
+import { useLanguageStore } from "@/lib/language-store"
+import { useTranslation } from "@/lib/translations"
 
 const difficultyColors: Record<string, string> = {
   Beginner: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
@@ -66,6 +40,36 @@ interface AcceptedTestWithDetails extends AcceptedTest {
 
 export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () => void }) {
   const { acceptedTests, updateTestProgress, updateTestStatus } = useAcceptedTestsStore()
+  const { language } = useLanguageStore()
+  const t = useTranslation(language)
+
+  const statusConfig: Record<AcceptedTest["status"], { label: string; color: string; icon: React.ElementType }> = {
+    "in-progress": {
+      label: t.inProgress,
+      color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+      icon: Play,
+    },
+    submitted: {
+      label: t.submitted,
+      color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
+      icon: Send,
+    },
+    "under-review": {
+      label: t.underReview,
+      color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+      icon: FileText,
+    },
+    completed: {
+      label: t.completed,
+      color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+      icon: CheckCircle2,
+    },
+    rejected: {
+      label: t.rejected,
+      color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+      icon: AlertCircle,
+    },
+  }
 
   // Join accepted tests with full test details
   const testsWithDetails: AcceptedTestWithDetails[] = acceptedTests
@@ -91,18 +95,16 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
   if (testsWithDetails.length === 0) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-foreground mb-2">My Tests</h1>
-        <p className="text-muted-foreground mb-6">Track your active and completed test assignments</p>
+        <h1 className="text-2xl font-semibold text-foreground mb-2">{t.myTestsTitle}</h1>
+        <p className="text-muted-foreground mb-6">{t.myTestsDescription}</p>
         <div className="bg-card border border-border rounded-lg p-8 text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
             <FileText className="w-8 h-8 text-muted-foreground" />
           </div>
-          <h3 className="font-semibold text-foreground mb-2">No Tests Yet</h3>
-          <p className="text-muted-foreground mb-4">
-            You haven't accepted any tests yet. Browse available opportunities to get started.
-          </p>
+          <h3 className="font-semibold text-foreground mb-2">{t.noTestsYet}</h3>
+          <p className="text-muted-foreground mb-4">{t.noTestsDescription}</p>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={onBrowseTests}>
-            Browse Available Tests
+            {t.browseAvailableTests}
           </Button>
         </div>
       </div>
@@ -112,8 +114,8 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground mb-2">My Tests</h1>
-        <p className="text-muted-foreground">Track your active and completed test assignments</p>
+        <h1 className="text-2xl font-semibold text-foreground mb-2">{t.myTestsTitle}</h1>
+        <p className="text-muted-foreground">{t.myTestsDescription}</p>
       </div>
 
       {/* Stats Overview */}
@@ -126,7 +128,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">{activeTests.length}</p>
-                <p className="text-xs text-muted-foreground">Active Tests</p>
+                <p className="text-xs text-muted-foreground">{t.activeTests}</p>
               </div>
             </div>
           </CardContent>
@@ -141,7 +143,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                 <p className="text-2xl font-bold text-foreground">
                   {completedTests.filter((t) => t.status === "completed").length}
                 </p>
-                <p className="text-xs text-muted-foreground">Completed</p>
+                <p className="text-xs text-muted-foreground">{t.completedTests}</p>
               </div>
             </div>
           </CardContent>
@@ -154,7 +156,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">${totalEarnings}</p>
-                <p className="text-xs text-muted-foreground">Total Earned</p>
+                <p className="text-xs text-muted-foreground">{t.totalEarned}</p>
               </div>
             </div>
           </CardContent>
@@ -167,7 +169,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">${pendingEarnings}</p>
-                <p className="text-xs text-muted-foreground">Pending</p>
+                <p className="text-xs text-muted-foreground">{t.pending}</p>
               </div>
             </div>
           </CardContent>
@@ -179,7 +181,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
             <Play className="w-5 h-5 text-primary" />
-            Active Tests ({activeTests.length})
+            {t.activeTests} ({activeTests.length})
           </h2>
           <div className="space-y-4">
             {activeTests.map((test) => {
@@ -230,7 +232,10 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Clock className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-muted-foreground">{test.details.estimatedHours}h estimated</span>
+                            <span className="text-muted-foreground">
+                              {test.details.estimatedHours}
+                              {t.estimatedHours}
+                            </span>
                           </div>
                           <div
                             className={cn(
@@ -244,9 +249,13 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                           >
                             <Calendar className="w-4 h-4" />
                             {isOverdue ? (
-                              <span className="font-medium">Overdue by {Math.abs(daysUntilDeadline)} days</span>
+                              <span className="font-medium">
+                                {t.overdueBy} {Math.abs(daysUntilDeadline)} {t.days}
+                              </span>
                             ) : (
-                              <span className={isUrgent ? "font-medium" : ""}>{daysUntilDeadline} days left</span>
+                              <span className={isUrgent ? "font-medium" : ""}>
+                                {daysUntilDeadline} {t.daysLeft}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -257,7 +266,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                         <Link href={`/test/${test.id}`} className="w-full">
                           <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                             <ExternalLink className="w-4 h-4 mr-2" />
-                            View Details
+                            {t.viewDetails}
                           </Button>
                         </Link>
                         {test.status === "in-progress" && (
@@ -267,7 +276,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                             onClick={() => updateTestStatus(test.id, "submitted")}
                           >
                             <Send className="w-4 h-4 mr-2" />
-                            Submit
+                            {t.submit}
                           </Button>
                         )}
                       </div>
@@ -285,7 +294,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
         <div>
           <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
             <Award className="w-5 h-5 text-primary" />
-            Completed Tests ({completedTests.length})
+            {t.completedTests} ({completedTests.length})
           </h2>
           <div className="space-y-3">
             {completedTests.map((test) => {
@@ -318,8 +327,8 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                             <span>{test.details.company}</span>
                             <span>•</span>
                             <span>
-                              Completed{" "}
-                              {test.completedAt ? new Date(test.completedAt).toLocaleDateString() : "Recently"}
+                              {t.completedOn}{" "}
+                              {test.completedAt ? new Date(test.completedAt).toLocaleDateString() : t.recently}
                             </span>
                           </div>
                         </div>
@@ -330,7 +339,7 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                             <p className="text-lg font-semibold text-green-600 dark:text-green-400">
                               +${test.details.reward}
                             </p>
-                            <p className="text-xs text-muted-foreground">Earned</p>
+                            <p className="text-xs text-muted-foreground">{t.earned}</p>
                           </div>
                         )}
                         <Link href={`/test/${test.id}`}>
@@ -357,14 +366,12 @@ export default function MyTestsSection({ onBrowseTests }: { onBrowseTests: () =>
                 <TrendingUp className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Keep Growing</h3>
-                <p className="text-sm text-muted-foreground">
-                  Browse more testing opportunities to increase your earnings
-                </p>
+                <h3 className="font-semibold text-foreground">{t.keepGrowing}</h3>
+                <p className="text-sm text-muted-foreground">{t.keepGrowingDescription}</p>
               </div>
             </div>
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={onBrowseTests}>
-              Find More Tests
+              {t.findMoreTests}
             </Button>
           </div>
         </CardContent>
