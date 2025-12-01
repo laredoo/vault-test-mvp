@@ -11,12 +11,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useUserStore } from "@/lib/user-store"
 
 interface HeaderProps {
   onMenuClick: () => void
 }
 
 export default function DashboardHeader({ onMenuClick }: HeaderProps) {
+  const { profile } = useUserStore()
+
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
@@ -61,15 +64,15 @@ export default function DashboardHeader({ onMenuClick }: HeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* User Stats */}
+          {/* User Stats - Now using dynamic data from shared store */}
           <div className="hidden sm:flex items-center gap-4 ml-4 pl-4 border-l border-border">
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Completed</p>
-              <p className="font-semibold text-foreground">24 Tests</p>
+              <p className="font-semibold text-foreground">{profile.stats.testsCompleted} Tests</p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Earned</p>
-              <p className="font-semibold text-primary">$8,450</p>
+              <p className="font-semibold text-primary">${profile.stats.totalEarnings.toLocaleString()}</p>
             </div>
           </div>
         </div>

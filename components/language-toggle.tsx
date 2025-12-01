@@ -89,3 +89,5 @@ export function LanguageToggle({ variant = "default" }: LanguageToggleProps) {
     </DropdownMenu>
   )
 }
+
+export default LanguageToggle
