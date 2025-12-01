@@ -173,6 +173,75 @@ export const translations = {
     paymentUpdates: "Payment Updates",
     weeklyDigest: "Weekly Digest",
     avgRating: "Avg. Rating",
+
+    // Settings Section
+    settingsTitle: "Settings",
+    settingsDescription: "Manage your account settings and preferences",
+    configureAccountPreferences: "Configure your account preferences",
+    settingsPanelComingSoon: "Settings panel coming soon",
+
+    // Appearance
+    appearance: "Appearance",
+    appearanceDescription: "Customize how the application looks and feels",
+    nightMode: "Night Mode",
+    nightModeOnDescription: "Dark theme is currently active for reduced eye strain",
+    nightModeOffDescription: "Light theme is currently active",
+    lightMode: "Light Mode",
+    darkMode: "Dark Mode",
+    languageDescription: "Choose your preferred display language",
+
+    // Notifications
+    notificationSettings: "Notifications",
+    notificationSettingsDescription: "Manage how you receive updates and alerts",
+    emailNotificationsDescription: "Receive updates via email",
+    pushNotifications: "Push Notifications",
+    pushNotificationsDescription: "Receive browser push notifications",
+    testAlertsDescription: "Get notified about new test opportunities",
+    paymentAlerts: "Payment Alerts",
+    paymentAlertsDescription: "Receive notifications about payments",
+    weeklyDigestDescription: "Get a weekly summary of your activity",
+
+    // Security
+    securitySettings: "Security",
+    securitySettingsDescription: "Protect your account with security features",
+    twoFactorAuth: "Two-Factor Authentication",
+    twoFactorAuthDescription: "Add an extra layer of security to your account",
+    enabled: "Enabled",
+    notEnabled: "Not Enabled",
+    changePassword: "Change Password",
+    currentPassword: "Current password",
+    newPassword: "New password",
+    confirmNewPassword: "Confirm new password",
+    updatePassword: "Update Password",
+    activeSessions: "Active Sessions",
+    currentDevice: "Current Device",
+    lastActive: "Last active",
+    revoke: "Revoke",
+
+    // Privacy
+    privacySettings: "Privacy",
+    privacySettingsDescription: "Control your data and visibility",
+    profileVisibility: "Profile Visibility",
+    profileVisibilityDescription: "Allow companies to view your profile",
+    showEarnings: "Show Earnings",
+    showEarningsDescription: "Display your earnings on your public profile",
+    showCompletedTests: "Show Completed Tests",
+    showCompletedTestsDescription: "Display your test history publicly",
+
+    // Quick Actions
+    quickActions: "Quick Actions",
+    downloadData: "Download My Data",
+    paymentMethods: "Payment Methods",
+    deleteAccount: "Delete Account",
+
+    // Account Status
+    accountStatus: "Account Status",
+    emailVerified: "Email Verified",
+    identityVerified: "Identity Verified",
+    verifiedOn: "Verified on",
+    needHelp: "Need Help?",
+    needHelpDescription: "Our support team is here to assist you with any questions.",
+    contactSupport: "Contact Support",
   },
   "pt-BR": {
     // Header
@@ -348,6 +417,75 @@ export const translations = {
     paymentUpdates: "Atualizações de Pagamento",
     weeklyDigest: "Resumo Semanal",
     avgRating: "Avaliação Média",
+
+    // Settings Section
+    settingsTitle: "Configurações",
+    settingsDescription: "Gerencie as configurações e preferências da sua conta",
+    configureAccountPreferences: "Configure as preferências da sua conta",
+    settingsPanelComingSoon: "Painel de configurações em breve",
+
+    // Appearance
+    appearance: "Aparência",
+    appearanceDescription: "Personalize a aparência do aplicativo",
+    nightMode: "Modo Noturno",
+    nightModeOnDescription: "Tema escuro está ativo para reduzir o cansaço visual",
+    nightModeOffDescription: "Tema claro está ativo",
+    lightMode: "Modo Claro",
+    darkMode: "Modo Escuro",
+    languageDescription: "Escolha seu idioma de exibição preferido",
+
+    // Notifications
+    notificationSettings: "Notificações",
+    notificationSettingsDescription: "Gerencie como você recebe atualizações e alertas",
+    emailNotificationsDescription: "Receba atualizações por e-mail",
+    pushNotifications: "Notificações Push",
+    pushNotificationsDescription: "Receba notificações push do navegador",
+    testAlertsDescription: "Seja notificado sobre novas oportunidades de teste",
+    paymentAlerts: "Alertas de Pagamento",
+    paymentAlertsDescription: "Receba notificações sobre pagamentos",
+    weeklyDigestDescription: "Receba um resumo semanal da sua atividade",
+
+    // Security
+    securitySettings: "Segurança",
+    securitySettingsDescription: "Proteja sua conta com recursos de segurança",
+    twoFactorAuth: "Autenticação de Dois Fatores",
+    twoFactorAuthDescription: "Adicione uma camada extra de segurança à sua conta",
+    enabled: "Ativado",
+    notEnabled: "Não Ativado",
+    changePassword: "Alterar Senha",
+    currentPassword: "Senha atual",
+    newPassword: "Nova senha",
+    confirmNewPassword: "Confirmar nova senha",
+    updatePassword: "Atualizar Senha",
+    activeSessions: "Sessões Ativas",
+    currentDevice: "Dispositivo Atual",
+    lastActive: "Última atividade",
+    revoke: "Revogar",
+
+    // Privacy
+    privacySettings: "Privacidade",
+    privacySettingsDescription: "Controle seus dados e visibilidade",
+    profileVisibility: "Visibilidade do Perfil",
+    profileVisibilityDescription: "Permitir que empresas vejam seu perfil",
+    showEarnings: "Mostrar Ganhos",
+    showEarningsDescription: "Exibir seus ganhos no perfil público",
+    showCompletedTests: "Mostrar Testes Concluídos",
+    showCompletedTestsDescription: "Exibir seu histórico de testes publicamente",
+
+    // Quick Actions
+    quickActions: "Ações Rápidas",
+    downloadData: "Baixar Meus Dados",
+    paymentMethods: "Métodos de Pagamento",
+    deleteAccount: "Excluir Conta",
+
+    // Account Status
+    accountStatus: "Status da Conta",
+    emailVerified: "E-mail Verificado",
+    identityVerified: "Identidade Verificada",
+    verifiedOn: "Verificado em",
+    needHelp: "Precisa de Ajuda?",
+    needHelpDescription: "Nossa equipe de suporte está aqui para ajudá-lo com qualquer dúvida.",
+    contactSupport: "Contatar Suporte",
   },
 }
 

@@ -8,6 +8,7 @@ import TestOpportunityCard from "@/components/dashboard/test-opportunity-card"
 import TestFilters from "@/components/dashboard/test-filters"
 import MyTestsSection from "@/components/dashboard/my-tests-section"
 import ProfileSection from "@/components/dashboard/profile-section"
+import SettingsSection from "@/components/dashboard/settings-section"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { testOpportunities } from "@/lib/test-data"
 import { useLanguageStore } from "@/lib/language-store"
@@ -145,15 +146,7 @@ export default function Dashboard() {
 
           {activeSection === "profile" && <ProfileSection />}
 
-          {activeSection === "settings" && (
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground mb-2">{t.settings}</h1>
-              <p className="text-muted-foreground mb-6">{t.configureAccountPreferences}</p>
-              <div className="bg-card border border-border rounded-lg p-6">
-                <p className="text-muted-foreground">{t.settingsPanelComingSoon}</p>
-              </div>
-            </div>
-          )}
+          {activeSection === "settings" && <SettingsSection />}
         </main>
       </div>
     </div>
