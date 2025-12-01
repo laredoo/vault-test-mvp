@@ -7,6 +7,7 @@ import DashboardHeader from "@/components/dashboard/header"
 import TestOpportunityCard from "@/components/dashboard/test-opportunity-card"
 import TestFilters from "@/components/dashboard/test-filters"
 import MyTestsSection from "@/components/dashboard/my-tests-section"
+import ProfileSection from "@/components/dashboard/profile-section"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { testOpportunities } from "@/lib/test-data"
 
@@ -40,7 +41,6 @@ export default function Dashboard() {
     }) => {
       let results = [...testOpportunities]
 
-      // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase()
         results = results.filter(
@@ -51,17 +51,14 @@ export default function Dashboard() {
         )
       }
 
-      // Type filter
       if (filters.type && filters.type !== "all") {
         results = results.filter((test) => test.type === filters.type)
       }
 
-      // Difficulty filter
       if (filters.difficulty && filters.difficulty !== "all") {
         results = results.filter((test) => test.difficulty === filters.difficulty)
       }
 
-      // Sorting
       switch (filters.sortBy) {
         case "reward-high":
           results.sort((a, b) => b.reward - a.reward)
@@ -141,15 +138,7 @@ export default function Dashboard() {
 
           {activeSection === "my-tests" && <MyTestsSection onBrowseTests={() => handleSectionChange("available")} />}
 
-          {activeSection === "profile" && (
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground mb-2">My Profile</h1>
-              <p className="text-muted-foreground mb-6">Manage your tester profile and skills</p>
-              <div className="bg-card border border-border rounded-lg p-6">
-                <p className="text-muted-foreground">Profile settings coming soon...</p>
-              </div>
-            </div>
-          )}
+          {activeSection === "profile" && <ProfileSection />}
 
           {activeSection === "settings" && (
             <div>
