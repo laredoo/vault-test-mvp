@@ -44,7 +44,7 @@ interface LanguageToggleProps {
   variant?: "default" | "compact"
 }
 
-export function LanguageToggle({ variant = "default" }: LanguageToggleProps) {
+function LanguageToggle({ variant = "default" }: LanguageToggleProps) {
   const { language, setLanguage } = useLanguageStore()
 
   const languages: { code: Language; name: string; flag: React.ReactNode }[] = [
@@ -90,4 +90,5 @@ export function LanguageToggle({ variant = "default" }: LanguageToggleProps) {
   )
 }
 
+export { LanguageToggle }
 export default LanguageToggle
